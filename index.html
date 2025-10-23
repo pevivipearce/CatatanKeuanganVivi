@@ -1,240 +1,305 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Catatan Keuangan Vivi</title>
-  <meta name="description" content="Catatan keuangan pribadi dengan UI modern dan bersih. Data disimpan secara lokal di browser Anda." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="data:,">
-</head>
-<body>
-  <header class="app-header">
-    <div class="left">
-      <h1>Catatan Keuangan Vivi</h1>
-      <span class="tag">🔒 Terenkripsi</span>
-    </div>
-    <div class="right">
-      <button id="downloadPdfBtn" class="btn ghost" title="Download PDF">📄 PDF</button>
-      <button id="sendWhatsappBtn" class="btn ghost" title="Kirim via WhatsApp">💬 WhatsApp</button>
-      <button id="importBtn" class="btn ghost" title="Impor data JSON">Impor</button>
-      <button id="exportBtn" class="btn ghost" title="Ekspor data JSON">Ekspor</button>
-      <button id="lockBtn" class="btn ghost" title="Kunci aplikasi">🔒 Kunci</button>
-      <button id="darkToggle" class="btn ghost" title="Ubah mode gelap">🌙</button>
-      <a class="btn primary" id="addTxBtn">Tambah Transaksi</a>
-    </div>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Catatan Keuangan Vivi</title>
+    <meta
+      name="description"
+      content="Catatan keuangan pribadi dengan UI modern dan bersih. Data disimpan secara lokal di browser Anda."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="left">
+        <h1>Catatan Keuangan Vivi</h1>
+        <span class="tag">🔒 Terenkripsi</span>
+      </div>
+      <div class="right">
+        <button id="downloadPdfBtn" class="btn ghost" title="Download PDF">
+          📄 PDF
+        </button>
+        <button
+          id="sendWhatsappBtn"
+          class="btn ghost"
+          title="Kirim via WhatsApp"
+        >
+          💬 WhatsApp
+        </button>
+        <button id="lockBtn" class="btn ghost" title="Kunci aplikasi">
+          🔒 Kunci
+        </button>
+        <button id="darkToggle" class="btn ghost" title="Ubah mode gelap">
+          🌙
+        </button>
+        <a class="btn primary" id="addTxBtn">Tambah Transaksi</a>
+      </div>
+    </header>
 
-  <main class="container">
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Dashboard</h2>
-        <div class="filters">
-          <select id="dashboardPeriod">
-            <option value="all">Semua Waktu</option>
-            <option value="today">Hari Ini</option>
-            <option value="week">Minggu Ini</option>
-            <option value="month" selected>Bulan Ini</option>
-            <option value="lastmonth">Bulan Lalu</option>
-            <option value="year">Tahun Ini</option>
-            <option value="custom">Rentang Kustom</option>
-          </select>
-          <div class="date-range-inputs">
-            <label>
-              <span class="date-label">Dari:</span>
-              <input type="date" id="dashboardStartDate" />
-            </label>
-            <label>
-              <span class="date-label">Sampai:</span>
-              <input type="date" id="dashboardEndDate" />
-            </label>
+    <main class="container">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Dashboard</h2>
+          <div class="filters">
+            <select id="dashboardPeriod">
+              <option value="all">Semua Waktu</option>
+              <option value="today">Hari Ini</option>
+              <option value="week">Minggu Ini</option>
+              <option value="month" selected>Bulan Ini</option>
+              <option value="lastmonth">Bulan Lalu</option>
+              <option value="year">Tahun Ini</option>
+              <option value="custom">Rentang Kustom</option>
+            </select>
+            <div class="date-range-inputs">
+              <label>
+                <span class="date-label">Dari:</span>
+                <input type="date" id="dashboardStartDate" />
+              </label>
+              <label>
+                <span class="date-label">Sampai:</span>
+                <input type="date" id="dashboardEndDate" />
+              </label>
+            </div>
+            <button id="applyDashboardFilter" class="btn primary">
+              Terapkan
+            </button>
           </div>
-          <button id="applyDashboardFilter" class="btn primary">Terapkan</button>
         </div>
-      </div>
-    </section>
-    <section class="dashboard">
-      <div class="card kpi">
-        <div class="kpi-label">Saldo Total</div>
-        <div class="kpi-value" id="kpiBalance">Rp0</div>
-        <div class="kpi-sub" id="kpiNetMonth">Bulan ini: Rp0</div>
-      </div>
-      <div class="card kpi">
-        <div class="kpi-label">Total Pemasukan</div>
-        <div class="kpi-value pos" id="kpiIncome">Rp0</div>
-        <div class="kpi-sub" id="kpiIncomeMonth">Bulan ini: Rp0</div>
-      </div>
-      <div class="card kpi">
-        <div class="kpi-label">Total Pengeluaran</div>
-        <div class="kpi-value neg" id="kpiExpense">Rp0</div>
-        <div class="kpi-sub" id="kpiExpenseMonth">Bulan ini: Rp0</div>
-      </div>
-      <div class="card kpi">
-        <div class="kpi-label">Tabungan</div>
-        <div class="kpi-value" id="kpiSavings" style="color: #8b5cf6;">Rp0</div>
-        <div class="kpi-sub" id="kpiSavingsSub">Target: Rp0</div>
-      </div>
-      <div class="card kpi">
-        <div class="kpi-label">Total Budget</div>
-        <div class="kpi-value" id="kpiTotalBudget" style="color: #06b6d4;">Rp0</div>
-        <div class="kpi-sub" id="kpiTotalBudgetSub">Terpakai: Rp0</div>
-      </div>
-    </section>
-
-    <section class="budget-section">
-      <div class="budget-header">
-        <h2>Budget per Kategori</h2>
-        <div class="budget-actions">
-          <button id="addBudgetBtn" class="btn ghost">+ Tambah Budget</button>
-          <button id="addCategoryExpenseBtn" class="btn ghost">+ Tambah Jenis Pengeluaran</button>
+      </section>
+      <section class="dashboard">
+        <div class="card kpi">
+          <div class="kpi-label">Saldo Total</div>
+          <div class="kpi-value" id="kpiBalance">Rp0</div>
+          <div class="kpi-sub" id="kpiNetMonth">Bulan ini: Rp0</div>
         </div>
-      </div>
-      <div class="budget-boxes" id="budgetBoxes">
-        <!-- Budget boxes will be rendered here by JavaScript -->
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Transaksi</h2>
-        <div class="filters">
-          <select id="filterType">
-            <option value="all">Semua</option>
-            <option value="income">Pemasukan</option>
-            <option value="expense">Pengeluaran</option>
-            <option value="savings">Tabungan</option>
-          </select>
-          <select id="filterCategory">
-            <option value="all">Semua kategori</option>
-          </select>
-          <input type="month" id="filterMonth" />
-          <input type="search" id="filterSearch" placeholder="Cari catatan…" />
-          <button id="clearFilters" class="btn ghost">Hapus</button>
+        <div class="card kpi">
+          <div class="kpi-label">Total Pemasukan</div>
+          <div class="kpi-value pos" id="kpiIncome">Rp0</div>
+          <div class="kpi-sub" id="kpiIncomeMonth">Bulan ini: Rp0</div>
         </div>
-      </div>
-      <div class="table-wrap">
-        <table class="table" id="txTable">
-          <thead>
-            <tr>
-              <th class="sortable" data-sort="date">Tanggal <span class="sort-icon"></span></th>
-              <th class="sortable" data-sort="type">Tipe <span class="sort-icon"></span></th>
-              <th class="sortable" data-sort="category">Kategori <span class="sort-icon"></span></th>
-              <th class="sortable num" data-sort="amount">Jumlah <span class="sort-icon"></span></th>
-              <th class="sortable" data-sort="note">Catatan <span class="sort-icon"></span></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-    </section>
+        <div class="card kpi">
+          <div class="kpi-label">Total Pengeluaran</div>
+          <div class="kpi-value neg" id="kpiExpense">Rp0</div>
+          <div class="kpi-sub" id="kpiExpenseMonth">Bulan ini: Rp0</div>
+        </div>
+        <div class="card kpi">
+          <div class="kpi-label">Tabungan</div>
+          <div class="kpi-value" id="kpiSavings" style="color: #8b5cf6">
+            Rp0
+          </div>
+          <div class="kpi-sub" id="kpiSavingsSub">Target: Rp0</div>
+        </div>
+        <div class="card kpi">
+          <div class="kpi-label">Total Budget</div>
+          <div class="kpi-value" id="kpiTotalBudget" style="color: #06b6d4">
+            Rp0
+          </div>
+          <div class="kpi-sub" id="kpiTotalBudgetSub">Terpakai: Rp0</div>
+        </div>
+      </section>
 
-    <section class="grid-2">
-      <div class="card">
+      <section class="budget-section">
+        <div class="budget-header">
+          <h2>Budget per Kategori</h2>
+          <div class="budget-actions">
+            <button id="addBudgetBtn" class="btn ghost">+ Tambah Budget</button>
+            <button id="addCategoryExpenseBtn" class="btn ghost">
+              + Tambah Jenis Pengeluaran
+            </button>
+          </div>
+        </div>
+        <div class="budget-boxes" id="budgetBoxes">
+          <!-- Budget boxes will be rendered here by JavaScript -->
+        </div>
+      </section>
+
+      <section class="panel">
         <div class="panel-header">
-          <h3>Pengeluaran per Kategori</h3>
-          <button id="manageCategoriesBtn" class="btn ghost">Kelola</button>
+          <h2>Transaksi</h2>
+          <div class="filters">
+            <select id="filterType">
+              <option value="all">Semua</option>
+              <option value="income">Pemasukan</option>
+              <option value="expense">Pengeluaran</option>
+              <option value="savings">Tabungan</option>
+            </select>
+            <select id="filterCategory">
+              <option value="all">Semua kategori</option>
+            </select>
+            <input type="month" id="filterMonth" />
+            <input
+              type="search"
+              id="filterSearch"
+              placeholder="Cari catatan…"
+            />
+            <button id="clearFilters" class="btn ghost">Hapus</button>
+          </div>
         </div>
-        <canvas id="categoryChart" height="200"></canvas>
-      </div>
-      <div class="card">
-        <div class="panel-header">
-          <h3>Pemasukan vs Pengeluaran</h3>
+        <div class="table-wrap">
+          <table class="table" id="txTable">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="date">
+                  Tanggal <span class="sort-icon"></span>
+                </th>
+                <th class="sortable" data-sort="type">
+                  Tipe <span class="sort-icon"></span>
+                </th>
+                <th class="sortable" data-sort="category">
+                  Kategori <span class="sort-icon"></span>
+                </th>
+                <th class="sortable num" data-sort="amount">
+                  Jumlah <span class="sort-icon"></span>
+                </th>
+                <th class="sortable" data-sort="note">
+                  Catatan <span class="sort-icon"></span>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-        <canvas id="trendChart" height="200"></canvas>
-      </div>
-    </section>
-  </main>
+      </section>
 
-  <!-- Transaction Modal -->
-  <dialog id="txModal" class="modal">
-    <form method="dialog" id="txForm" class="modal-body">
-      <header class="modal-header">
-        <h3 id="txModalTitle">Tambah Transaksi</h3>
-        <button class="icon-btn" type="button" value="cancel" title="Tutup">✕</button>
-      </header>
-      <div class="form-grid">
-        <label>
-          <span>Tipe</span>
-          <select name="type" required>
-            <option value="expense">Pengeluaran</option>
-            <option value="income">Pemasukan</option>
-            <option value="savings">Tabungan</option>
-          </select>
-        </label>
-        <label>
-          <span>Jumlah</span>
-          <input name="amount" type="number" step="0.01" min="0" required />
-        </label>
-        <label>
-          <span>Tanggal</span>
-          <input name="date" type="date" required />
-        </label>
-        <label>
-          <span>Kategori</span>
-          <select name="category" id="txCategory" required></select>
-        </label>
-        <label class="full">
-          <span>Catatan</span>
-          <input name="note" type="text" placeholder="Opsional" />
-        </label>
-      </div>
-      <footer class="modal-footer">
-        <button class="btn ghost" type="button" value="cancel">Batal</button>
-        <button id="deleteTxBtn" class="btn danger hidden" type="button">Hapus</button>
-        <button class="btn primary" type="submit" value="confirm">Simpan</button>
-      </footer>
-      <input type="hidden" name="id" />
-    </form>
-  </dialog>
+      <section class="grid-2">
+        <div class="card">
+          <div class="panel-header">
+            <h3>Pengeluaran per Kategori</h3>
+            <button id="manageCategoriesBtn" class="btn ghost">Kelola</button>
+          </div>
+          <canvas id="categoryChart" height="200"></canvas>
+        </div>
+        <div class="card">
+          <div class="panel-header">
+            <h3>Pemasukan vs Pengeluaran</h3>
+          </div>
+          <canvas id="trendChart" height="200"></canvas>
+        </div>
+      </section>
+    </main>
 
-  <!-- Categories Modal -->
-  <dialog id="catModal" class="modal">
-    <form method="dialog" id="catForm" class="modal-body">
-      <header class="modal-header">
-        <h3>Kelola Kategori & Anggaran</h3>
-        <button class="icon-btn" type="button" value="cancel" title="Tutup">✕</button>
-      </header>
-      <div class="category-list" id="categoryList"></div>
-      <div class="row">
-        <input id="newCatName" placeholder="Nama kategori baru" />
-        <input id="newCatColor" type="color" value="#7c3aed" />
-        <input id="newCatBudget" type="number" step="0.01" min="0" placeholder="Anggaran bulanan (opsional)" />
-        <button id="addCategoryBtn" type="button" class="btn">Tambah</button>
-      </div>
-      <footer class="modal-footer">
-        <button class="btn ghost" type="button" value="cancel">Tutup</button>
-        <button id="resetDefaultsBtn" type="button" class="btn danger ghost">Reset ke default</button>
-      </footer>
-    </form>
-  </dialog>
+    <!-- Transaction Modal -->
+    <dialog id="txModal" class="modal">
+      <form method="dialog" id="txForm" class="modal-body">
+        <header class="modal-header">
+          <h3 id="txModalTitle">Tambah Transaksi</h3>
+          <button class="icon-btn" type="button" value="cancel" title="Tutup">
+            ✕
+          </button>
+        </header>
+        <div class="form-grid">
+          <label>
+            <span>Tipe</span>
+            <select name="type" required>
+              <option value="expense">Pengeluaran</option>
+              <option value="income">Pemasukan</option>
+              <option value="savings">Tabungan</option>
+            </select>
+          </label>
+          <label>
+            <span>Jumlah</span>
+            <input name="amount" type="number" step="0.01" min="0" required />
+          </label>
+          <label>
+            <span>Tanggal</span>
+            <input name="date" type="date" required />
+          </label>
+          <label>
+            <span>Kategori</span>
+            <select name="category" id="txCategory" required></select>
+          </label>
+          <label class="full">
+            <span>Catatan</span>
+            <input name="note" type="text" placeholder="Opsional" />
+          </label>
+        </div>
+        <footer class="modal-footer">
+          <button class="btn ghost" type="button" value="cancel">Batal</button>
+          <button id="deleteTxBtn" class="btn danger hidden" type="button">
+            Hapus
+          </button>
+          <button class="btn primary" type="submit" value="confirm">
+            Simpan
+          </button>
+        </footer>
+        <input type="hidden" name="id" />
+      </form>
+    </dialog>
 
-  <!-- Password Modal -->
-  <dialog id="passwordModal" class="modal">
-    <form method="dialog" id="passwordForm" class="modal-body">
-      <header class="modal-header">
-        <h3 id="passwordModalTitle">Masukkan Kata Sandi</h3>
-      </header>
-      <div class="form-grid">
-        <label class="full">
-          <span>Kata Sandi</span>
-          <input id="passwordInput" type="password" placeholder="Masukkan kata sandi Anda" required autofocus />
-        </label>
-        <div id="passwordError" class="error-msg hidden">Kata sandi salah. Coba lagi.</div>
-        <div id="passwordHint" class="hint-msg">Pertama kali? Atur kata sandi untuk mengenkripsi data Anda.</div>
-      </div>
-      <footer class="modal-footer">
-        <button class="btn danger ghost" type="button" id="resetDataBtn">Reset Data</button>
-        <button class="btn primary" id="passwordSubmit">Buka Kunci</button>
-      </footer>
-    </form>
-  </dialog>
+    <!-- Categories Modal -->
+    <dialog id="catModal" class="modal">
+      <form method="dialog" id="catForm" class="modal-body">
+        <header class="modal-header">
+          <h3>Kelola Kategori & Anggaran</h3>
+          <button class="icon-btn" type="button" value="cancel" title="Tutup">
+            ✕
+          </button>
+        </header>
+        <div class="category-list" id="categoryList"></div>
+        <div class="row">
+          <input id="newCatName" placeholder="Nama kategori baru" />
+          <input id="newCatColor" type="color" value="#7c3aed" />
+          <input
+            id="newCatBudget"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="Anggaran bulanan (opsional)"
+          />
+          <button id="addCategoryBtn" type="button" class="btn">Tambah</button>
+        </div>
+        <footer class="modal-footer">
+          <button class="btn ghost" type="button" value="cancel">Tutup</button>
+          <button id="resetDefaultsBtn" type="button" class="btn danger ghost">
+            Reset ke default
+          </button>
+        </footer>
+      </form>
+    </dialog>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="app.js"></script>
-</body>
+    <!-- Password Modal -->
+    <dialog id="passwordModal" class="modal">
+      <form method="dialog" id="passwordForm" class="modal-body">
+        <header class="modal-header">
+          <h3 id="passwordModalTitle">Masukkan Kata Sandi</h3>
+        </header>
+        <div class="form-grid">
+          <label class="full">
+            <span>Kata Sandi</span>
+            <input
+              id="passwordInput"
+              type="password"
+              placeholder="Masukkan kata sandi Anda"
+              required
+              autofocus
+            />
+          </label>
+          <div id="passwordError" class="error-msg hidden">
+            Kata sandi salah. Coba lagi.
+          </div>
+          <div id="passwordHint" class="hint-msg">
+            Pertama kali? Atur kata sandi untuk mengenkripsi data Anda.
+          </div>
+        </div>
+        <footer class="modal-footer">
+          <button class="btn danger ghost" type="button" id="resetDataBtn">
+            Reset Data
+          </button>
+          <button class="btn primary" id="passwordSubmit">Buka Kunci</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>
